@@ -17,10 +17,18 @@ def read_json_file(file_name) -> list[Account]:
     
     transactions = data["activities"]
     for trx in transactions:
+        if trx["type"] == "BUY":
+            totalSum = trx["quantity"] * trx["unitPrice"]
+            accounts[trx["accountId"]].transactions.append(
+            Transaction(trx["date"], f"$CASH-{trx["currency"]}", totalSum, "DEPOSIT",
+                        1, trx["currency"], 0)
+            )    
         accounts[trx["accountId"]].transactions.append(
             Transaction(trx["date"], trx["symbol"], trx["quantity"], trx["type"],
                         trx["unitPrice"], trx["currency"], trx["fee"])
         )
+        
+
     
     return accounts.values()
 
