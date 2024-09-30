@@ -6,25 +6,34 @@ class Transaction:
     date: str
     symbol: str
     quantity: float
-    activityType: str
+    type: str
     unitPrice: float
     currency: str
     fee: float
+    dataSource: str = ""
+    accountId: str = ""
+    comment: str = ""
 
     def __str__(self) -> str:
         return (
             f"{self.date},{self.symbol},{self.quantity},"
-            f"{self.activityType},{self.unitPrice},{self.currency},{self.fee}"
+            f"{self.type},{self.unitPrice},{self.currency},{self.fee}"
         )
 
 
-@dataclass
 class Account:
     """Represents one account"""
-    id: str
-    name: str
-    currency: str
-    transactions: list[Transaction]
+    
+    def __init__(self, id: str, name: str, currency: str, **kwargs):
+        self.id = id
+        self.name = name
+        self.currency = currency
+        self.transactions: list[Transaction] = []
+
+    def add_transaction(self, trx: Transaction) -> None:
+        if not self.transactions:
+            self.transactions = []
+        self.transactions.append(trx)
 
     def to_file(self) -> None:
         header = "date,symbol,quantity,activityType,unitPrice,currency,fee"

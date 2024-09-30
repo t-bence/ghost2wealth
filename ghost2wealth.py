@@ -11,21 +11,20 @@ def read_json_file(file_name) -> list[Account]:
     
     with open(file_name, 'r') as file:
         data = json.load(file)
-    
-    accounts = {acc["id"]: Account(acc["id"], acc["name"], acc["currency"], [])
+
+    accounts = {acc["id"]: Account(**acc)
                 for acc in data["accounts"]}
-    
+
     transactions = data["activities"]
     for trx in transactions:
         if trx["type"] == "BUY":
             totalSum = trx["quantity"] * trx["unitPrice"]
-            accounts[trx["accountId"]].transactions.append(
+            accounts[trx["accountId"]].add_transaction(
             Transaction(trx["date"], f"$CASH-{trx["currency"]}", totalSum, "DEPOSIT",
                         1, trx["currency"], 0)
             )    
-        accounts[trx["accountId"]].transactions.append(
-            Transaction(trx["date"], trx["symbol"], trx["quantity"], trx["type"],
-                        trx["unitPrice"], trx["currency"], trx["fee"])
+        accounts[trx["accountId"]].add_transaction(
+            Transaction(**trx)
         )
         
 
